@@ -19,21 +19,28 @@ def message1():
     sock.connect((HOST, PORT))
     # list of files that will be shared with the server
     mylist = []
-    # get the files from the command line arguments
-    for arg in range(4, len(sys.argv)):
-        size = os.path.getsize(CLIENT_DIR+sys.argv[arg])
-        # tuples of the file name and the size of the file
-        tup = (sys.argv[arg], size)
-        mylist.append(tup)
-    # format the message to send
-    msgdict = {"message": 1}
-    msgdict["files"] = mylist
-    msgdict["lPort"] = LISTEN_PORT
+    # if the client has to files to share then it just passes through the message 1. 
+    if len(sys.argv) <=4:
+        print("This peer shares no files with the server")
+        msgdict = {"message": 1}
+        msgdict["files"] = mylist
+        msgdict["lPort"] = LISTEN_PORT
+    else:
+        # get the files from the command line arguments
+        for arg in range(4, len(sys.argv)):
+            size = os.path.getsize(CLIENT_DIR+sys.argv[arg])
+            # tuples of the file name and the size of the file
+            tup = (sys.argv[arg], size)
+            mylist.append(tup)
+        # format the message to send
+        msgdict = {"message": 1}
+        msgdict["files"] = mylist
+        msgdict["lPort"] = LISTEN_PORT
     send_msg(sock,msgdict)
     data = recv_msg(sock)
     print(data)
-    if data["success"] != 1:
-        print("An error has occurred")
+    #if data["success"] != 1:
+    #    print("An error has occurred")
     sock.close()
     return data
 

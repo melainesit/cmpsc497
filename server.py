@@ -11,18 +11,30 @@ import sys
 # The server is being told what files the peer wants to share with the network
 def register_request(conn, peer, files, lPort):
     peerKey = str(peer[0])+":"+str(lPort)
-    for pFile in files:
-        # checks if the file name exists in the dictinary 
-        # if so, then add the list of chunks for that peer 
-        if pFile[0] in fileDict:
-            fileDict[pFile[0]][peerKey] = list(range(1, pFile[1]+1))
+    if len(files) == 0:
+        conn.sendto(str.encode(json.dumps({"message":1, "file":[], "success":1})), peer)
+    else:
+        senddict = {}
+        senddict["message"] = 1
+        #senddict["file"] = []
+        tuplist = []
+        for pFile in files:
+            # checks if the file name exists in the dictinary 
+            # if so, then add the list of chunks for that peer 
+            if pFile[0] in fileDict:
+                fileDict[pFile[0]][peerKey] = list(range(1, pFile[1]+1))
         
-        # file name did not exist in the dictionary so add it in
-        else:
-            # add the peer and its chunks          
-            fileDict[pFile[0]] = {peerKey: list(range(1, pFile[1]+1))}
-        # send to peer that the specific file was successfully added to the server
-        conn.sendto(str.encode(json.dumps({"message":1, "file":pFile[0], "success":1})), peer)
+            # file name did not exist in the dictionary so add it in
+            else:
+                # add the peer and its chunks          
+                fileDict[pFile[0]] = {peerKey: list(range(1, pFile[1]+1))}
+        
+            # send to peer that the specific file was successfully added to the server
+            print("This is fileDict" + str(fileDict))
+            tup = (pFile[0], "success")
+            tuplist.append(tup)
+
+        conn.sendto(str.encode(json.dumps({"message":1, "file": tuplist})), peer)
     return 0
 
 # message #2: 
