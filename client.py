@@ -53,7 +53,7 @@ def message2():
     # a list of file names and the peers that have chunks of those files
     for lfile in data["files"].keys():
         fileList[lfile] = data["files"][lfile]
-    print("This is fileList: " + str(fileList))
+    #print("This is fileList: " + str(fileList))
     sock.close()
     return 0
 
@@ -95,7 +95,7 @@ def message3():
     #format message 3
     msgdict = {"message": 3}
     msgdict["fileName"] = fileName
-    print("this is msgdict3: " + str(msgdict))
+    #print("this is msgdict3: " + str(msgdict))
     send_msg(sock, msgdict)
     data = recv_msg(sock)
     print(data)
@@ -141,7 +141,7 @@ def message5():
     if len(fileList)==0:
         message2()
             
-    print("This is the fileList: " + str(fileList))
+    #print("This is the fileList: " + str(fileList))
     # getting the ip addresses and chunks of a requested file
     data3 = message3()
 
@@ -163,7 +163,7 @@ def message5():
     # run message 3 to find out what peer has that chunk
     fileowners = []
         
-    print("this is data3: " + str(data3))
+    #print("this is data3: " + str(data3))
     # go find a peer that has that chunk
     for peer in data3["peers"].keys():
         if chunk in data3["peers"][peer]:
@@ -179,7 +179,7 @@ def message5():
         tempindexlist.append(i)
         print(str(i) + ".\t" + str(peer))
 
-    print(tempindexlist)
+    #print(tempindexlist)
     peernum = int(input("Enter which peer you want to receive data from:" ).strip())
     # error check to see if the peer they requested was offered
     while peernum not in tempindexlist:
@@ -209,7 +209,7 @@ def message5():
         chunkdatalist = {fileName: {int(chunk): newdata["data"]}}    
 
 
-    print("This is chunkdatalist: " + str(chunkdatalist))
+    #print("This is chunkdatalist: " + str(chunkdatalist))
 
     # writing to the file with chunks in order
     f = open(CLIENT_DIR+fileName, "w+")
@@ -285,11 +285,12 @@ print("Waiting for connection")
 sListen = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sListen.bind((HOST, LISTEN_PORT))
 start_new_thread(start_listener, (sListen,))
+message1()
 
 while True:
     message = input("What message would you like to send: ").strip()
     
-    message1()
+    #message1()
     
     if message == "2":
         message2()

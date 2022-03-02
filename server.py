@@ -104,7 +104,7 @@ def handle_conn(conn, peer):
     
 # a dictionary where the key is the file name. Each file name has a dictionary. in that dictionary it will have the peer as a key 
 # and a list of chunks it has. the peer will be a tuple of ip addr and port
-# ex: {filename: {peer1: [1,3,5,7,8]}}
+# ex: {filename: {peer1: [1,3,5,7,8]}} 
 fileDict = {}
 
 # localhost
