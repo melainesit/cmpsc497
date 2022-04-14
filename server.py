@@ -8,9 +8,7 @@ import math
 import sys
 from threading import Thread, Lock
 
- 
-
-
+# write to the server the message
 def write_to_server(servSock, sender, comment, timestamp):
     msgdict = {
         "message": 3,
@@ -21,10 +19,6 @@ def write_to_server(servSock, sender, comment, timestamp):
     y = json.dumps(msgdict)
     servSock.sendto(str.encode(y),addr)
     return 0
-
-    # add the message
-    # send it to all the other servers
-    # send a message back to the client saying it was sent to all the servers
 
 # send a message back to the client saying that it was sent to all the connections (allConn)
 def write_to_client(conn,addr,sender, comment,timestamp,success):
@@ -50,10 +44,6 @@ def request_all_comments(conn,addr):
     conn.sendto(str.encode(y),addr)
     return 0
 
-#def sort_dict(mydict):
-
-#    new_list = sorted(mydict.items(), key=lambda x:x[0])
-#    mydict = dict(new_list)
 
 # handles requests from the individual client within a thread
 def handle_conn(conn, peer):
@@ -69,7 +59,7 @@ def handle_conn(conn, peer):
         sender = data["sender"]
         comment = data["comment"]
         timestamp = data["timestamp"]
-        # format a dictionary to append to the messages list {"timestamp" : (sender,message)}
+        # format a dictionary to append to the messages dict {"timestamp" : (sender,message)}
         allmessages[timestamp] = (sender,comment)
         # sort the dictionary
         new_list = sorted(allmessages.items(), key=lambda x:x[0])
@@ -83,9 +73,8 @@ def handle_conn(conn, peer):
             # with a message like no one to send it to
             write_to_client(conn,peer,sender, comment,timestamp,success)
         else:
-            # loop through conn list and start a new thread and send the message
+            # loop through connection list and start a new thread and send the message
             for server in allConn:
-                #print("this is server:" + str(server))
                 servSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 servSock.connect(('127.0.0.1', int(server)))
                 start_new_thread(write_to_server, (servSock,sender,comment,timestamp))
@@ -93,15 +82,9 @@ def handle_conn(conn, peer):
             success = 0
             write_to_client(conn,peer,sender, comment,timestamp,success)
 
+    # send the client all the messages
     if message == 2:
-        #servSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        #servSock.connect(('127.0.0.1', int(server)))
         request_all_comments(conn,peer)
-        
-
-    # client wants to see all the messages ever made
-    #if message == 2:
-    #    request_all_comments(conn,peer)
 
     # server is receiving a message
     if message == 3:
@@ -116,7 +99,6 @@ def handle_conn(conn, peer):
         print("these are all the messages: " + str(allmessages))
         
     mutex.release()
-
     conn.close()
 
     
@@ -145,9 +127,10 @@ while True:
     conn, addr = sock.accept()
     print("Connected by ", addr)
     who = sys.argv[1]
-    # can just have server.py
+    # append all the server ports to the connection list
     for i in range(3,len(sys.argv)):
         allConn.append(sys.argv[i])
+    # remove any duplicates just in case
     allConn = list(set(allConn))
     print("this is the connections: " + str(allConn))
 
