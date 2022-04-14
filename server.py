@@ -27,7 +27,7 @@ def write_to_client(conn,addr,sender, comment,timestamp,success):
         "sender": sender,
         "comment": comment,
         "timestamp": timestamp,
-        "success": 1
+        "success": success
     }
     y = json.dumps(msgdict)
     conn.sendto(str.encode(y), addr)
@@ -102,7 +102,7 @@ def handle_conn(conn, peer):
     conn.close()
 
     
-# a list of all server connections, tuple(conn,addr)
+# a list of all server connections
 allConn = []
 # a dictionary of all messages key = timestamp value: sender, and comment
 allmessages = {}

@@ -65,7 +65,7 @@ s.connect((HOST, PORT))
 
 while True:
     # checks if the user wants to see all the messages
-    allmessages = input("Do you want to see all the messages ? (yes/no): ").strip()
+    allmessages = input("Do you want to see all the messages? (yes/no): ").strip()
     if allmessages == "yes":
         # gets all the messages
         request_comments()
